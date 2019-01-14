@@ -1,5 +1,5 @@
 var express = require('express');
-
+//ch4
 var app = express();
 var fortune = require('./lib/fortune');
 var handlebars = require('express3-handlebars').create({defaultLayout: 'main'});
