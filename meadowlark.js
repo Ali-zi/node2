@@ -19,7 +19,31 @@ app.get('/', function(req, res){
     // res.send('MeadowLark Travel');
     res.render('home');
 });
+/*
 
+app.get('/headers', function(req, res){
+    res.type('text/plain');
+    var s = '';
+    for(var name in req.headers) {
+        s+= name + ': ' + req.headers[name] + '\n';
+    }
+    res.send(s);
+});*/
+
+app.get('/testblocks',function(req, res){
+    res.render('testBlocks', {
+        currency: {
+            name: 'United states dollars',
+            abbrev: 'USD'
+        },
+        tours: [
+            {name: 'Hood River', price: '$99.95'} ,
+            {name: 'Oregon Coast', price: '159.95'}
+        ],
+        specialsUrl: '/january-specials',
+        currencies:['USD', 'GBP', 'BTC']
+    });
+} );
 
 app.get('/about', function(req, res){
    res.render('about', {
@@ -34,7 +58,7 @@ app.get('/tours/hood-river', function(req, res) {
 
 app.get('/tours/oregon-coast', function(req, res){
     res.render('tours/oregon-coast');
-})
+});
 
 app.get('/tours/request-group-rate', function(req, res){
     res.render('tours/request-group-rate');
