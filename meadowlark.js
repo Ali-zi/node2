@@ -2,7 +2,15 @@ var express = require('express');
 //ch4
 var app = express();
 var fortune = require('./lib/fortune');
-var handlebars = require('express3-handlebars').create({defaultLayout: 'main'});
+var handlebars = require('express3-handlebars').create({defaultLayout: 'main',
+    helpers: {
+        section: function(name, options) {
+            if(!this._sections) this._sections = {};
+            this._sections[name] = options.fn(this);
+            return null;
+        }
+    }    
+});
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
@@ -11,6 +19,8 @@ app.use(express.static(__dirname + '/public'));
 app.set('port', process.env.PORT || 3000);
 
 app.use(function(req, res, next){
+    if(!res.locals.partials) res.locals.partials = {};
+    res.locals.partials.weather = getWeatherData();
     res.locals.showTests = app.get('env') !== 'production' && req.query.test === '1';
     next();
 });
@@ -18,6 +28,10 @@ app.use(function(req, res, next){
 app.get('/', function(req, res){
     // res.send('MeadowLark Travel');
     res.render('home');
+});
+
+app.get('/jquery', function(req, res){
+    res.render('jquery-test');
 });
 /*
 
@@ -41,7 +55,8 @@ app.get('/testblocks',function(req, res){
             {name: 'Oregon Coast', price: '159.95'}
         ],
         specialsUrl: '/january-specials',
-        currencies:['USD', 'GBP', 'BTC']
+        currencies:['USD', 'GBP', 'BTC'],
+        yolo: testDownHere,
     });
 } );
 
@@ -79,3 +94,36 @@ app.listen(app.get('port'), function(){
     console.log('express started on http://localhost:'+
     app.get('port') + 'press ctrl-c to terminate');
 });
+
+
+function getWeatherData() {
+    return {
+        locations: [
+            {
+                name: 'Portland',
+                forecastUrl: 'http://www.wunderground.com/US/OR/Portland.html',
+                iconUrl: 'http://icons-ak.wxug.com/i/c/k/cloudy.gif',
+                weather: 'Overcast',
+                temp: '54.1 F (12.3 C)',
+            },
+            {
+                name: 'Bend',
+                forecastUrl: 'http://www.wunderground.com/US/OR/Bend.html',
+                iconUrl: 'http://icons-ak.wxug.com/i/c/k/partlycloudy.gif',
+                weather: 'Partly Cloudy',
+                temp: '55.0 F (12.8 C)',
+            },
+            {
+                name: 'Manzanita',
+                forecastUrl: 'http://www.wunderground.com/US/OR/Manzanita.html',
+                iconUrl: 'http://icons-ak.wxug.com/i/c/k/rain.gif',
+                weather: 'Light Rain',
+                temp: '55.0 F (12.8 C)',
+            },
+        ],
+    };
+}
+
+function testDownHere(){
+    return "yolo";
+}
